@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.2s ease-in-out;
+        }
+        .wall-container{
+            width: 100vw;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1558724242-98deb4a005da?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=3900&q=80') center center no-repeat;
+            background-size: cover;
+        }
+
+        .loader{
+            width: 100vw;
+            height: 2px;
+            background: red;
+            position: absolute;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
+            transform: scaleX(0);
+            transform-origin: 0 0;
+
+            animation: grow 5s ease-in-out;
+        }
+
+        @keyframes grow {
+            from{
+                transform: scaleX(0);
+            }
+            to{
+                transform: scaleX(1);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    <section class="wall-container" id="box"></section>
+    
+    <script>
+        let imageBuffer = [];
+        const fetchUrls = {
+            'wallpapers' : 'https://www.reddit.com/r/wallpapers.json',
+            'wallpapers-top' : 'https://www.reddit.com/r/wallpapers/top.json',
+            'wallpapers-top-all' : 'https://www.reddit.com/r/wallpapers/top.json?t=all',
+            'wallpapers-top-year' : 'https://www.reddit.com/r/wallpapers/top.json?sort=top&t=year',
+            'wallpapers-top-month' : 'https://www.reddit.com/r/wallpapers/top.json?sort=top&t=month',
+            'wallpapers-top-week' : 'https://www.reddit.com/r/wallpapers/top.json?sort=top&t=week',
+            'wallpapers-top-day' : 'https://www.reddit.com/r/wallpapers/top.json?sort=top&t=day',
+            'wallpapers-top-hr' : 'https://www.reddit.com/r/wallpapers/top.json?sort=top&t=hour',
+            'wallpapers-new' : 'https://www.reddit.com/r/wallpapers/new.json',
+        }
+
+        fetch(fetchUrls['wallpapers-top-day'])
+        .then(res => res.json())
+        .then(res => res.data.children)
+        .then(res => res.map(post =>({
+            img: post.data.url
+        }))).then(res => {
+            imageBuffer = res;
+
+            console.log(imageBuffer);
+
+            // trigger image change
+            rotateBgImage(imageBuffer);
+        });
+
+        const render = (target, url) => {
+            target.style.background = `url(${url}) center center no-repeat`;
+            target.style.backgroundSize = 'cover';
+        }
+
+        const rotateBgImage = (buffer) => {
+            let i = 0;
+            const limit = buffer.length;
+            const wBox = document.getElementById('box');
+
+            // for (let index = 0; index < buffer.length; index++) {
+            //     const element = array[index];
+            // }
+
+            render(wBox, buffer[0].img);
+        }
+
+    </script>
+</body>
+</html>
